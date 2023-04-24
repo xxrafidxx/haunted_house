@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls'
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
+// import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls'
 // import * as dat from 'lil-gui'
 
 /**
@@ -18,6 +19,11 @@ const scene = new THREE.Scene()
 // Fog
 const fog = new THREE.Fog('#262837', 1, 15)
 scene.fog = fog
+
+/**
+ * 3d loader
+*/
+const modelLoader = new GLTFLoader(); 
 
 /**
  * Textures
@@ -43,6 +49,9 @@ const grassNormalTexture = textureLoader.load('/textures/grass/normal.jpg')
 const grassRoughnessTexture = textureLoader.load('/textures/grass/roughness.jpg')
 
 const boundariesColorTexture = textureLoader.load('/textures/boundaries/color.jpg')
+
+const treeColorTexture = textureLoader.load('/textures/tree/color.png')
+const treeNormalTexture = textureLoader.load('/textures/tree/normal.png')
 
 grassColorTexture.repeat.set(8,8)
 grassAmbientOcclusionTexture.repeat.set(8,8)
@@ -196,6 +205,34 @@ bush4.scale.set(0.15, 0.15, 0.15)
 bush4.position.set(-1, 0.05, 2.6)
 
 house.add(bush1, bush2, bush3, bush4)
+
+// Tree
+modelLoader.load( '/models/dead_tree.gltf',(tree) => { 
+    const treeScene = tree.scene
+
+    treeScene.traverse((child) => {
+        if (child.isMesh) {
+            const material = child.material
+            material.map = treeColorTexture
+            material.aoMap = treeNormalTexture
+            material.transparent = true
+
+            child.scale.set(0.1, 0.1, 0.1)
+
+            child.geometry.setAttribute(
+                'uv2',
+                new THREE.Float32BufferAttribute(child.geometry.attributes.uv.array, 2)
+            )
+        }
+    })
+
+    treeScene.position.set(-2, 2, 5)
+    // treeScene.rotation.y = Math.PI / 2
+
+    treeScene.castShadow = true
+    
+    scene.add( treeScene )
+})
 
 // Graves
 const graves = new THREE.Group()
