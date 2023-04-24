@@ -16,8 +16,8 @@ const canvas = document.querySelector('canvas.webgl')
 const scene = new THREE.Scene()
 
 // Fog
-const fog = new THREE.Fog('#262837', 1, 15)
-scene.fog = fog
+// const fog = new THREE.Fog('#262837', 1, 15)
+// scene.fog = fog
 
 /**
  * Textures
@@ -41,6 +41,8 @@ const grassColorTexture = textureLoader.load('/textures/grass/color.jpg')
 const grassAmbientOcclusionTexture = textureLoader.load('/textures/grass/ambientOcclusion.jpg')
 const grassNormalTexture = textureLoader.load('/textures/grass/normal.jpg')
 const grassRoughnessTexture = textureLoader.load('/textures/grass/roughness.jpg')
+
+const boundariesColorTexture = textureLoader.load('/textures/boundaries/color.jpg')
 
 grassColorTexture.repeat.set(8,8)
 grassAmbientOcclusionTexture.repeat.set(8,8)
@@ -109,6 +111,46 @@ floor.geometry.setAttribute(
 floor.rotation.x = - Math.PI * 0.5
 floor.position.y = 0
 scene.add(floor)
+
+// Boundaries
+const boundaries = new THREE.Group()
+const boundary1 = new THREE.Mesh(
+    new THREE.BoxGeometry( 21, 2, 1 ), 
+    new THREE.MeshStandardMaterial({
+        map: boundariesColorTexture
+    })
+)
+boundary1.position.set(0, 1, 10)
+
+const boundary2 = new THREE.Mesh(
+    new THREE.BoxGeometry( 21, 2, 1 ), 
+    new THREE.MeshStandardMaterial({
+        map: boundariesColorTexture
+    })
+)
+boundary2.position.set(10, 1, 0)
+boundary2.rotation.y = Math.PI / 2
+
+const boundary3 = new THREE.Mesh(
+    new THREE.BoxGeometry( 21, 2, 1 ), 
+    new THREE.MeshStandardMaterial({
+        map: boundariesColorTexture
+    })
+)
+boundary3.position.set(0, 1, -10)
+
+const boundary4 = new THREE.Mesh(
+    new THREE.BoxGeometry( 21, 2, 1 ), 
+    new THREE.MeshStandardMaterial({
+        map: boundariesColorTexture
+    })
+)
+boundary4.position.set(-10, 1, 0)
+boundary4.rotation.y = Math.PI / 2
+
+boundaries.add(boundary1, boundary2, boundary3, boundary4)
+
+scene.add(boundaries)
 
 // Door
 const door = new THREE.Mesh(
